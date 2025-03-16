@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 import pandas as pd
 from tkinter import ttk
 
@@ -19,7 +19,7 @@ class AnalisisDatos:
         """
         self.root = root
         self.root.title("Minería de Datos v1.0")
-        self.root.geometry("1024x768")
+        self.root.geometry("1366x700")
         self.root.resizable(False, False)
         # self.root.protocol("WM_DELETE_WINDOW", self.confirmar_salir)
         self.root.iconbitmap(ICON)
@@ -62,12 +62,35 @@ class AnalisisDatos:
         # Cargar la ventana principal
         self.vent_principal()
 
+        # Variable para almacenar el archivo cargado
+        self.archivo_cargado = None
+
     def limpiar_frame(self):
         """
         Limpiar el contenido del Frame principal.
         """
         for widget in self.main_frame.winfo_children():
             widget.destroy()
+
+    # Tabla para mostrar los datos
+    def mostrar_datos(self, datos):
+        self.limpiar_frame()
+        tabla_frame = tk.Frame(self.main_frame, background="gray")
+        tabla_frame.pack(expand=True, fill="both", padx=20, pady=20)
+
+        tabla = ttk.Treeview(tabla_frame)
+        tabla.pack(expand=True, fill="both")
+
+        tabla["columns"] = list(datos.columns)
+        for col in datos.columns:
+            tabla.heading(col, text=col)
+            tabla.column(col, anchor="center")
+
+        for _, row in datos.iterrows():
+            tabla.insert("", "end", values=list(row))
+
+        nueva_carga_btn = tk.Button(tabla_frame, text="Nueva Carga", command=self.vent_principal, background="white", foreground="gray", font=("Arial", 14))
+        nueva_carga_btn.pack(pady=10)
 
     def vent_principal(self):
         """
@@ -84,7 +107,7 @@ class AnalisisDatos:
 
         # Botón para buscar archivo
         def buscar_archivo():
-            archivo = tk.filedialog.askopenfilename(filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
+            archivo = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
             if archivo:
                 archivo_entry.delete(0, tk.END)
                 archivo_entry.insert(0, archivo)
@@ -101,53 +124,52 @@ class AnalisisDatos:
             archivo = archivo_entry.get()
             if archivo:
                 try:
+                    self.archivo_cargado = archivo  # Guardar el archivo cargado
                     datos = pd.read_csv(archivo)
-                    mostrar_datos(datos)
+                    self.mostrar_datos(datos)
                 except Exception as e:
                     messagebox.showerror("Error", f"No se pudo cargar el archivo: {e}")
+                    print(e)
 
         cargar_btn = tk.Button(principal_frame, text="Cargar", command=cargar_datos, background=COLOR1, foreground=COLOR3, font=("Arial", 14))
         cargar_btn.pack(pady=10)
-
-        # Tabla para mostrar los datos
-        def mostrar_datos(datos):
-            self.limpiar_frame()
-            tabla_frame = tk.Frame(self.main_frame, background=COLOR3)
-            tabla_frame.pack(expand=True, fill="both", padx=20, pady=20)
-
-            tabla = ttk.Treeview(tabla_frame)
-            tabla.pack(expand=True, fill="both")
-
-            # Configurar las columnas
-            tabla["columns"] = list(datos.columns)
-            for col in datos.columns:
-                tabla.heading(col, text=col)
-                tabla.column(col, anchor="center")
-
-            # Insertar los datos
-            for index, row in datos.iterrows():
-                tabla.insert("", "end", values=list(row))
-
-        # Imagen representativa
-        logo = tk.PhotoImage(file=LOGO)
-        logo_label = tk.Label(principal_frame, image=logo, background=COLOR3)
-        logo_label.image = logo
-        logo_label.pack(pady=10)
-        pass
 
     def analisis_datos(self):
         """
         Cargar la ventana de análisis de datos.
         """
+        if not self.archivo_cargado:
+            messagebox.showwarning("Advertencia", "Debe cargar un archivo antes de realizar análisis.")
+            return
+
         self.limpiar_frame()
-        pass
+        analisis_frame = tk.Frame(self.main_frame, background="gray")
+        analisis_frame.pack(expand=True, fill="both", padx=20, pady=20)
+
+        label = tk.Label(analisis_frame, text="Análisis de Datos", font=("Arial", 24), background="gray", foreground="white")
+        label.pack(pady=10)
+
+        datos = pd.read_csv(self.archivo_cargado)
+        resumen = datos.describe()
+
+        text_box = tk.Text(analisis_frame, font=("Arial", 12), height=15, width=80)
+        text_box.insert("1.0", resumen.to_string())
+        text_box.pack()
 
     def insetar_datos(self):
         """
         Cargar la ventana de inserción de datos.
         """
+        if not self.archivo_cargado:
+            messagebox.showwarning("Advertencia", "Debe cargar un archivo antes de insertar datos.")
+            return
+
         self.limpiar_frame()
-        pass
+        insertar_frame = tk.Frame(self.main_frame, background="gray")
+        insertar_frame.pack(expand=True, fill="both", padx=20, pady=20)
+
+        label = tk.Label(insertar_frame, text="Insertar Datos", font=("Arial", 24), background="gray", foreground="white")
+        label.pack(pady=10)
 
     def acercade(self):
         """
@@ -155,14 +177,25 @@ class AnalisisDatos:
         """
         self.limpiar_frame()
 
-        # Texto de "Acerca de"
+        # Frame para centrar el contenido
+        acerca_frame = tk.Frame(self.main_frame, background=COLOR3)
+        acerca_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+        # Imagen representativa
+        logo = tk.PhotoImage(file=LOGO)
+        logo_label = tk.Label(acerca_frame, image=logo, background=COLOR3)
+        logo_label.image = logo
+        logo_label.pack(pady=10)
+
         about_text = (
             "Minería de Datos v1.0\n"
             "2025\n"
             "Desarrollado por: Camilo Mercado\n"
-            "Aplicación para análisis de datos extraidos de Datos Abiertos."
+            'Aplicación para análisis de datos extraídos de "Datos Abiertos."'
         )
-        pass
+
+        about_label = tk.Label(acerca_frame, text=about_text, font=("Arial", 14), background=COLOR3, foreground=COLOR2, justify="center")
+        about_label.pack(pady=10)
 
     def confirmar_salir(self):
         """
