@@ -1,58 +1,58 @@
-1. Google Coolab
+- Google Coolab
 
-Aplicación de Escritorio - Especificaciones Funcionales
+- Aplicación de Escritorio - Especificaciones Funcionales
 
-Características Generales
-    - Aplicación de escritorio pura (no web, no móvil, sin frameworks web-escritorio).
-    - No se conecta a una base de datos, no sube a la nube, es completamente local.
-    - Tendrá una interfaz gráfica con colores e imágenes relacionadas con el tipo de datos que se van a cargar.
+    Características Generales
+        - Aplicación de escritorio pura (no web, no móvil, sin frameworks web-escritorio).
+        - No se conecta a una base de datos, no sube a la nube, es completamente local.
+        - Tendrá una interfaz gráfica con colores e imágenes relacionadas con el tipo de datos que se van a cargar.
 
-Menú principal con las siguientes secciones:
+    Menú principal con las siguientes secciones:
 
-    1. Principal
-        Funcionalidad
-            - Permitir al usuario buscar un archivo de datos desde el explorador de archivos.
-            - Un botón “Cargar” para subir la data seleccionada.
-            - Una tabla bien diseñada y visualmente atractiva donde se mostrarán todos los registros del archivo cargado.
-        Interfaz
-            - Debe incluir imágenes y colores representativos del tipo de datos a cargar.
+        1. Principal - Completado ✅
+            Funcionalidad
+                - Permitir al usuario buscar un archivo de datos desde el explorador de archivos. ✅
+                - Un botón “Cargar” para subir la data seleccionada. ✅
+                - Una tabla bien diseñada y visualmente atractiva donde se mostrarán todos los registros del archivo cargado. ✅
+            Interfaz
+                - Debe incluir imágenes y colores representativos del tipo de datos a cargar. ✅
 
-    2. Análisis
-        Funcionalidad
-            - Un combobox que liste todas las columnas del archivo cargado.
-            - Al seleccionar una columna, el usuario debe indicar su tipo de datos (categórico o continuo).
-            - Un botón “Generar Análisis” que, al presionarlo, mostrará:
-            - Head (primeras filas de la tabla).
-            - Cantidad total de registros.
-            - Cantidad de valores nulos por columna.
-            - Estadísticas de la columna seleccionada usando la función describe().
-            - Gráficos adecuados según el tipo de datos (categórico o continuo).
-            - Valores únicos en la columna seleccionada.
-        Interfaz
-            - Un formulario dinámico donde el usuario pueda seleccionar la columna y el tipo de dato antes de presionar “Generar Análisis”.
+        2. Análisis
+            Funcionalidad
+                - Un combobox que liste todas las columnas del archivo cargado.
+                - Al seleccionar una columna, el usuario debe indicar su tipo de datos (categórico o continuo).
+                - Un botón “Generar Análisis” que, al presionarlo, mostrará:
+                - Head (primeras filas de la tabla).
+                - Cantidad total de registros.
+                - Cantidad de valores nulos por columna.
+                - Estadísticas de la columna seleccionada usando la función describe().
+                - Gráficos adecuados según el tipo de datos (categórico o continuo).
+                - Valores únicos en la columna seleccionada.
+            Interfaz
+                - Un formulario dinámico donde el usuario pueda seleccionar la columna y el tipo de dato antes de presionar “Generar Análisis”.
 
-    3. Insertar
-        Funcionalidad
-            - Permitir al usuario agregar un nuevo registro a la data cargada.
-            - Se generará un formulario dinámico con tantos campos como columnas tenga la data.
-            - Cada campo llevará el nombre de la columna correspondiente en mayúsculas.
-            - Un botón “Agregar” que incorporará el nuevo registro a la tabla mostrada en la sección Principal.
-            - Orden de la tabla: los registros más recientes deben aparecer primero.
-            - Un botón “Importar” que generará un archivo CSV con la data actualizada, incluyendo los registros agregados manualmente.
+        3. Insertar
+            Funcionalidad
+                - Permitir al usuario agregar un nuevo registro a la data cargada.
+                - Se generará un formulario dinámico con tantos campos como columnas tenga la data.
+                - Cada campo llevará el nombre de la columna correspondiente en mayúsculas.
+                - Un botón “Agregar” que incorporará el nuevo registro a la tabla mostrada en la sección Principal.
+                - Orden de la tabla: los registros más recientes deben aparecer primero.
+                - Un botón “Importar” que generará un archivo CSV con la data actualizada, incluyendo los registros agregados manualmente.
 
-    4. Acerca de
-        Contenido
-            - Nombre del aplicativo.
-            - Versión del software.
-            - Año de desarrollo.
-            - Integrantes del equipo.
-            - Breve descripción del propósito de la aplicación.
+        4. Acerca de ✅
+            Contenido
+                - Nombre del aplicativo. ✅
+                - Versión del software. ✅
+                - Año de desarrollo. ✅
+                - Integrantes del equipo. ✅
+                - Breve descripción del propósito de la aplicación. ✅
 
-    5. Salir
-        Funcionalidad
-            Al seleccionar esta opción, se mostrará una ventana de confirmación con el mensaje:
-            “¿Está seguro de que desea salir del aplicativo?”
-            Dos opciones:
-                - “Sí” → Cierra la aplicación.
-                - “No” → Cierra la ventana de confirmación y regresa a la aplicación.
+        5. Salir ✅
+            Funcionalidad
+                Al seleccionar esta opción, se mostrará una ventana de confirmación con el mensaje:
+                “¿Está seguro de que desea salir del aplicativo?” ✅
+                Dos opciones:
+                    - “Sí” → Cierra la aplicación. ✅
+                    - “No” → Cierra la ventana de confirmación y regresa a la aplicación. ✅
 
