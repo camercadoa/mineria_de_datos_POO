@@ -1,4 +1,5 @@
 import tkinter as tk
+import chardet
 import matplotlib.pyplot as plt
 import pandas as pd
 from tkinter import messagebox, filedialog, ttk
@@ -119,9 +120,23 @@ class AnalisisDatos:
                 archivo = archivo_entry.get()
                 if archivo:
                     try:
-                        self.archivo_cargado = archivo  # Guardar el archivo cargado
-                        self.datos_cargados = pd.read_csv(archivo)  # Guardar los datos en memoria
-                        self.mostrar_datos(self.datos_cargados)  # Mostrar los datos
+                        # Detectar codificación
+                        with open(archivo, "rb") as f:
+                            resultado = chardet.detect(f.read(100000))  # Analiza los primeros 100,000 bytes
+                            encoding_detectado = resultado["encoding"]
+
+                        if encoding_detectado is None:
+                            raise ValueError("No se pudo detectar la codificación del archivo.")
+
+                        # Cargar el archivo con la codificación detectada
+                        self.archivo_cargado = archivo
+                        self.datos_cargados = pd.read_csv(archivo, encoding=encoding_detectado)
+
+                        # Mostrar los datos
+                        self.mostrar_datos(self.datos_cargados)
+
+                    except UnicodeDecodeError:
+                        messagebox.showerror("Error", "No se pudo leer el archivo con la codificación detectada.")
                     except Exception as e:
                         messagebox.showerror("Error", f"No se pudo cargar el archivo: {e}")
                         print(e)
@@ -213,6 +228,10 @@ class AnalisisDatos:
         analisis_frame = tk.Frame(self.main_frame, background=COLOR3)
         analisis_frame.pack(expand=True, fill="both", padx=20, pady=20)
 
+        # Título
+        label_title = tk.Label(analisis_frame, text="Análisis de Datos", font=("Arial", 24), background=COLOR3, foreground=COLOR1)
+        label_title.pack(pady=10)
+
         # Crear un contenedor para el Frame con scroll
         canvas = tk.Canvas(analisis_frame, background=COLOR3)
         scrollbar = tk.Scrollbar(analisis_frame, orient="vertical", command=canvas.yview)
@@ -231,12 +250,11 @@ class AnalisisDatos:
 
         # Vincular scroll con el mouse
         def vincular_scroll(event):
-            canvas.yview_scroll(-1 * int((event.delta / 120)), "units")
-        canvas.bind_all("<MouseWheel>", vincular_scroll)
+            widget = event.widget
+            if isinstance(widget, tk.Canvas):  # Solo si el evento ocurre en un Canvas
+                widget.yview_scroll(-1 * int((event.delta / 120)), "units")
 
-        # Título
-        label_title = tk.Label(scroll_frame, text="Análisis de Datos", font=("Arial", 24), background=COLOR3, foreground=COLOR1)
-        label_title.pack(pady=10)
+        root.bind_all("<MouseWheel>", vincular_scroll)  # Vincular a la raíz
 
         # Contenedor para la selección de columna y tipo de dato
         seleccion_frame = tk.Frame(scroll_frame, background=COLOR3)
@@ -282,9 +300,30 @@ class AnalisisDatos:
             # Título - HEAD
             tk.Label(scroll_frame, text="HEAD", font=("Arial", 18), background=COLOR3, foreground=COLOR1).pack(pady=10)
 
-            # Mostrar las primeras filas de la columna seleccionada
+            # # Mostrar las primeras 10 filas de la columna seleccionada
+            # frame_head = tk.Frame(scroll_frame, background=COLOR3)
+            # frame_head.pack(pady=10)
+
+            # # Crear el Treeview
+            # tree_head = ttk.Treeview(frame_head, columns=("Index", "Valor"), show="headings", height=10)
+
+            # # Configurar encabezados
+            # tree_head.heading("Index", text="Índice")
+            # tree_head.heading("Valor", text=columna)
+
+            # # Ajustar tamaño de columnas
+            # tree_head.column("Index", width=100, anchor="center")
+            # tree_head.column("Valor", width=200, anchor="center")
+
+            # # Insertar datos
+            # for i, valor in enumerate(self.datos_cargados[columna].head(10)):
+            #     tree_head.insert("", "end", values=(i, valor))
+
+            # # Agregar Treeview al frame
+            # tree_head.pack()
+
             tk.Label(scroll_frame, text=f"Primeras filas de la columna {columna}:", font=("Arial", 16), background=COLOR3, foreground=COLOR2).pack(pady=10)
-            tk.Label(scroll_frame, text=self.datos_cargados[columna].head(), font=("Arial", 14), background=COLOR3, foreground=COLOR2).pack(pady=10)
+            tk.Label(scroll_frame, text=self.datos_cargados[columna].head(10), font=("Arial", 14), background=COLOR3, foreground=COLOR2).pack(pady=10)
 
             # Separador
             ttk.Separator(scroll_frame, orient="horizontal").pack(fill="x", pady=10)
@@ -411,6 +450,102 @@ class AnalisisDatos:
 
         label = tk.Label(insertar_frame, text="Insertar Datos", font=("Arial", 24), background=COLOR3, foreground=COLOR1)
         label.pack(pady=10)
+
+        # Crear un frame contenedor con scrollbar
+        contenedor = tk.Frame(insertar_frame)
+        contenedor.pack(fill="both", expand=True, padx=10, pady=10)
+
+        canvas = tk.Canvas(contenedor, background=COLOR3)
+        scrollbar = tk.Scrollbar(contenedor, orient="vertical", command=canvas.yview)
+        scroll_frame = tk.Frame(canvas, background=COLOR3)
+
+        # Configurar la región de desplazamiento
+        scroll_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+
+        canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        # Empaquetar el Canvas y la Scrollbar
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        # Diccionario para almacenar las entradas de cada campo
+        self.entradas = {}
+
+        # Crear formulario dinámico basado en las columnas del DataFrame
+        if self.datos_cargados is None or self.datos_cargados.empty:
+            messagebox.showerror("Error", "No hay datos cargados para determinar la estructura.")
+            return
+
+        form_frame = tk.Frame(scroll_frame, background=COLOR3)
+        form_frame.pack(pady=10, padx=50, fill="both")
+
+
+        for columna in self.datos_cargados.columns:
+            frame_campo = tk.Frame(form_frame, background=COLOR3)
+            frame_campo.pack(pady=5, fill="x", expand="True")
+
+            label = tk.Label(frame_campo, text=columna, background=COLOR3, foreground=COLOR1, font=("Arial", 12, "bold"))
+            label.pack(side="left", padx=10)
+
+            entrada = tk.Entry(frame_campo, font=("Arial", 12), bd=2, relief="solid", width=60)
+            entrada.pack(side="left", fill="x", expand=True, padx=10, ipady=5)
+            self.entradas[columna] = entrada  # Guardar la referencia
+
+        # Frame para los botones
+        btn_frame = tk.Frame(insertar_frame, background=COLOR3)
+        btn_frame.pack(pady=15)
+
+        # Botón para guardar los datos
+        btn_guardar = tk.Button(btn_frame, text="Guardar", command=self.guardar_datos, background=COLOR1, foreground=COLOR3, font=("Arial", 12))
+        btn_guardar.pack(side="left", padx=10)
+
+        # Botón para exportar el archivo CSV con la data actualizada
+        btn_exportar = tk.Button(btn_frame, text="Exportar CSV", command=self.exportar_csv, background=COLOR2, foreground=COLOR3, font=("Arial", 12))
+        btn_exportar.pack(side="left", padx=10)
+
+    def guardar_datos(self):
+        """
+        Guarda los datos ingresados y actualiza la tabla.
+        """
+        nueva_fila = {col: self.entradas[col].get() for col in self.datos_cargados.columns}
+
+        # Convertir los valores numéricos si es necesario
+        for col in self.datos_cargados.select_dtypes(include=['int64', 'float64']).columns:
+            try:
+                nueva_fila[col] = float(nueva_fila[col]) if '.' in nueva_fila[col] else int(nueva_fila[col])
+            except ValueError:
+                messagebox.showerror("Error", f"El valor en '{col}' debe ser numérico.")
+                return
+
+        # Agregar la nueva fila al DataFrame
+        self.datos_cargados = pd.concat([self.datos_cargados, pd.DataFrame([nueva_fila])], ignore_index=True)
+
+        # Actualizar la tabla en la interfaz
+        self.mostrar_datos(self.datos_cargados)
+
+        messagebox.showinfo("Éxito", "Datos insertados correctamente.")
+
+    def exportar_csv(self):
+        """
+        Exporta el DataFrame actualizado a un archivo CSV.
+        """
+        if self.datos_cargados is None or self.datos_cargados.empty:
+            messagebox.showerror("Error", "No hay datos para exportar.")
+            return
+
+        archivo_guardar = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            filetypes=[("Archivos CSV", "*.csv")],
+            title="Guardar archivo CSV"
+        )
+
+        if archivo_guardar:
+            self.datos_cargados.to_csv(archivo_guardar, index=False)
+            messagebox.showinfo("Éxito", f"Datos exportados correctamente a:\n{archivo_guardar}")
 
     def acercade(self):
         """
