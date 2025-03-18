@@ -23,7 +23,7 @@ class AnalisisDatos:
         """
         self.root = root
         self.root.title("Minería de Datos v1.0")
-        self.root.geometry("1366x800")
+        self.root.geometry("1366x700")
         self.root.resizable(False, False)
         # self.root.protocol("WM_DELETE_WINDOW", self.confirmar_salir)
         self.root.iconbitmap(ICON)
@@ -368,7 +368,7 @@ class AnalisisDatos:
                 datos = self.datos_cargados[columna].value_counts()
 
                 # Gráfico de Barras
-                fig = Figure(figsize=(6, 4), dpi=150)
+                fig = Figure(figsize=(5, 3), dpi=150)
                 ax = fig.add_subplot(111)
                 datos.plot(kind="bar", ax=ax, color=COLOR1, edgecolor="black")
                 ax.set_title(f"Distribución de {columna}", fontsize=12)
@@ -382,13 +382,12 @@ class AnalisisDatos:
                 canvas.draw()
 
                 # Gráfico de Torta
-                fig2 = Figure(figsize=(6, 6), dp8i=150)
+                fig2 = Figure(figsize=(5, 5), dpi=150)
                 ax2 = fig2.add_subplot(111)
                 datos.plot(kind="pie", ax=ax2, autopct="%1.1f%%", startangle=90, colors=[COLOR1, COLOR3, COLOR2], wedgeprops={"edgecolor": "black"})
                 ax2.set_title(f"Distribución de {columna}", fontsize=12)
                 ax2.set_ylabel("")
                 ax2.axis("equal")
-                ax2.tick_params(labelsize=5)
 
                 canvas2 = FigureCanvasTkAgg(fig2, master=graficos_frame)
                 canvas2.get_tk_widget().pack(pady=10)
@@ -404,7 +403,7 @@ class AnalisisDatos:
                     return
 
                 # Histograma
-                fig = Figure(figsize=(6, 4), dpi=150)
+                fig = Figure(figsize=(5, 3), dpi=150)
                 ax = fig.add_subplot(111)
                 datos.plot(kind="hist", ax=ax, color=COLOR1, bins=20, edgecolor="black", alpha=0.75)
                 ax.set_title(f"Distribución de {columna}", fontsize=12)
@@ -418,7 +417,7 @@ class AnalisisDatos:
                 canvas.draw()
 
                 # Caja de Bigotes
-                fig2 = Figure(figsize=(6, 4), dpi=150)
+                fig2 = Figure(figsize=(5, 3), dpi=150)
                 ax2 = fig2.add_subplot(111)
                 self.datos_cargados.boxplot(column=columna, ax=ax2, vert=False, patch_artist=True,
                                             boxprops=dict(facecolor=COLOR1, color="black"),
