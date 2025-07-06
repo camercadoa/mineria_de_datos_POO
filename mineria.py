@@ -560,7 +560,7 @@ class AnalisisDatos:
         acerca_frame.place(relx=0.5, rely=0.5, anchor="center")
 
         # Imagen representativa
-        logo = tk.PhotoImage(file=LOGO)
+        logo = tk.PhotoImage(file=LOGO, master=acerca_frame)
         logo_label = tk.Label(acerca_frame, image=logo, background=COLOR3)
         logo_label.image = logo
         logo_label.pack(pady=10)
