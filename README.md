@@ -34,61 +34,45 @@ La aplicación está dividida en varias secciones principales, accesibles desde 
 
 - Permite seleccionar y cargar archivos CSV desde el explorador de archivos.
 
-    ```markdown
     ![Principal](images/captures/home.jpg)
     *Figura 1: Vista de la sección "Principal" al abrir el aplicativo.*
-    ```
 
-    ```markdown
     ![Principal - Archivo seleccionado](images/captures/home_file_selected.jpg)
     *Figura 2: Vista de la sección "Principal" luego de seleccionar el archivo CSV que se va a analizar.*
-    ```
 
 - Muestra los datos en una tabla interactiva.
 
-    ```markdown
     ![Principal - Archivo Cargado](images/captures/home_file_upload.jpg)
     *Figura 3: Vista de la sección "Principal" luego de cargar el archivo.*
-    ```
 
 ### 2. Análisis
 
 - Permite seleccionar una columna y su tipo de dato (categórico o continuo).
 
-    ```markdown
     ![Análisis](images/captures/analysis.jpg)
     *Figura 4: Vista de la sección "Análisis".*
-    ```
 
 - Genera análisis estadísticos automáticos:
   - Primeras filas (`head`)
   - Conteo de registros, valores nulos y únicos
   - Estadísticas descriptivas (`describe`)
 
-    ```markdown
     ![Análisis estádistico - Datos categóricos](images/captures/analysis_data_categorical_info.jpg)
     *Figura 5: Vista de la sección "Análisis" para análisis estádistico datos categóricos.*
-    ```
 
-    ```markdown
     ![Análisis estádisticos - Datos continuos](images/captures/analysis_data_continuous_info.jpg)
     *Figura 6: Vista de la sección "Análisis" análisis estádistico para datos continuos.*
-    ```
 
 - Gráficos automáticos según el tipo de dato:
   - Datos categóricos: de barras y de torta.
 
-    ```markdown
     ![Análisis gráfico - Datos catégoricos](images/captures/analysis_data_categorical_graphics.jpg)
     *Figura 7: Vista de la sección "Análisis" para análisis gráfico para datos categóricos.*
-    ```
 
   - Datos continuos: histograma y caja de bigotes.
 
-    ```markdown
     ![Análisis gráfico - Datos continuos](images/captures/analysis_data_continuous_graphics.jpg)
     *Figura 8: Vista de la sección "Análisis" para análisis gráfico para datos continuos.*
-    ```
 
 ### 3. Insertar
 
@@ -96,20 +80,16 @@ La aplicación está dividida en varias secciones principales, accesibles desde 
 - Permite guardar el nuevo registro y actualizar la tabla.
 - Opción para exportar la data actualizada a un nuevo archivo CSV.
 
-    ```markdown
     ![Insertar](images/captures/insert_dynamic_form.jpg)
     *Figura 9: Vista de la sección "Insertar" con forumario dinámico.*
-    ```
 
 ### 4. Acerca de
 
 - Muestra información sobre la aplicación, versión, año y autoría.
 - Incluye el logo y una breve descripción del propósito del software.
 
-    ```markdown
     ![Acerca de](images/captures/about.jpg)
     *Figura 10: Vista de la sección "Acerca de".*
-    ```
 
 ### 5. Salir
 
